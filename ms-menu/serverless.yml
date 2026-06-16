@@ -1,0 +1,36 @@
+org: rafach1906
+service: mrsushi-ms-menu
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  iam:
+    role: arn:aws:iam::882218839822:role/LabRole
+  environment:
+    MENU_TABLE: mrsushi-menu
+
+functions:
+  getMenu:
+    handler: handler.getMenu
+    events:
+      - httpApi:
+          path: /menu
+          method: GET
+          cors: true
+
+  getCategory:
+    handler: handler.getCategory
+    events:
+      - httpApi:
+          path: /menu/{category}
+          method: GET
+          cors: true
+
+  createProduct:
+    handler: handler.createProduct
+    events:
+      - httpApi:
+          path: /menu
+          method: POST
+          cors: true

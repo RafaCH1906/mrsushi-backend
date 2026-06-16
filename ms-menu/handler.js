@@ -56,7 +56,10 @@ module.exports.createProduct = async (event) => {
   await dynamo.send(new PutCommand({
     TableName: process.env.MENU_TABLE,
     Item: item,
-  }));
+
+  })  );
+
+
 
   return {
     statusCode: 201,

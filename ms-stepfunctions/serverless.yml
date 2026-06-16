@@ -1,0 +1,60 @@
+org: rafach1906
+service: mrsushi-ms-stepfunctions
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  iam:
+    role: arn:aws:iam::882218839822:role/LabRole
+
+plugins:
+  - serverless-step-functions
+
+stepFunctions:
+  stateMachines:
+    OrderWorkflow:
+      name: mrsushi-order-workflow
+      definition:
+        Comment: "Flujo de pedidos Mr Sushi"
+        StartAt: Cooking
+        States:
+          Cooking:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke.waitForTaskToken
+            Parameters:
+              FunctionName: arn:aws:lambda:us-east-1:882218839822:function:mrsushi-ms-workflow-dev-saveTaskToken
+              Payload:
+                step: COOKING
+                taskToken.$: "$$.Task.Token"
+                orderId.$: "$.orderId"
+                origin.$: "$.origin"
+            ResultPath: "$.cookingResult"
+            Next: Packing
+          Packing:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke.waitForTaskToken
+            Parameters:
+              FunctionName: arn:aws:lambda:us-east-1:882218839822:function:mrsushi-ms-workflow-dev-saveTaskToken
+              Payload:
+                step: PACKING
+                taskToken.$: "$$.Task.Token"
+                orderId.$: "$.orderId"
+                origin.$: "$.origin"
+            ResultPath: "$.packingResult"
+            Next: Delivering
+          Delivering:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke.waitForTaskToken
+            Parameters:
+              FunctionName: arn:aws:lambda:us-east-1:882218839822:function:mrsushi-ms-workflow-dev-saveTaskToken
+              Payload:
+                step: DELIVERING
+                taskToken.$: "$$.Task.Token"
+                orderId.$: "$.orderId"
+                origin.$: "$.origin"
+            ResultPath: "$.deliveringResult"
+            Next: Done
+          Done:
+          
+            Type: Succeed

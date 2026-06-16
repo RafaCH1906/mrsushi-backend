@@ -103,11 +103,11 @@ module.exports.getWorkflow = async (event) => {
     ExpressionAttributeValues: {
       ":pk": `ORDER#${orderId}`,
     },
-  }));
+  })  );
 
   return {
     statusCode: 200,
     headers: { "Access-Control-Allow-Origin": "*" },
     body: JSON.stringify(result.Items),
-  };
+   };
 };

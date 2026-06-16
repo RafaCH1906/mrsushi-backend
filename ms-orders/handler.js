@@ -75,7 +75,7 @@ module.exports.getOrder = async (event) => {
 module.exports.listOrders = async () => {
   const result = await dynamo.send(new ScanCommand({
     TableName: process.env.ORDERS_TABLE,
-  }));
+  })  );
 
   return {
     statusCode: 200,
