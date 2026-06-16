@@ -1,0 +1,32 @@
+org: rafach1906
+service: mrsushi-ms-workflow
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  iam:
+    role: arn:aws:iam::882218839822:role/LabRole
+  environment:
+    WORKFLOW_TABLE: mrsushi-workflow
+    ORDERS_TABLE: mrsushi-orders
+
+functions:
+  saveTaskToken:
+    handler: handler.saveTaskToken
+
+  completeStep:
+    handler: handler.completeStep
+    events:
+      - httpApi:
+          path: /workflow/complete
+          method: POST
+          cors: true
+
+  getWorkflow:
+    handler: handler.getWorkflow
+    events:
+      - httpApi:
+          path: /workflow/{orderId}
+          method: GET
+          cors: true

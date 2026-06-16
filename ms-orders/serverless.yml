@@ -1,0 +1,38 @@
+org: rafach1906
+service: mrsushi-ms-orders
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  iam:
+    role: arn:aws:iam::882218839822:role/LabRole
+  environment:
+    ORDERS_TABLE: mrsushi-orders
+    WORKFLOW_TABLE: mrsushi-workflow
+    STATE_MACHINE_ARN: !Sub "arn:aws:states:us-east-1:882218839822:stateMachine:mrsushi-order-workflow"
+
+functions:
+  createOrder:
+    handler: handler.createOrder
+    events:
+      - httpApi:
+          path: /orders
+          method: POST
+          cors: true
+
+  getOrder:
+    handler: handler.getOrder
+    events:
+      - httpApi:
+          path: /orders/{orderId}
+          method: GET
+          cors: true
+
+  listOrders:
+    handler: handler.listOrders
+    events:
+      - httpApi:
+          path: /orders
+          method: GET
+          cors: true
